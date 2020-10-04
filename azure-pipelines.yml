@@ -40,8 +40,7 @@ stages:
           -group: terraformEnvVars
         steps:
           - script: |
-              set -e
-              cd ./weatherapi
+              set -e              
               terraform init -input=false
               terraform apply -input=false -auto-approve
             name: "RunTerraform"
