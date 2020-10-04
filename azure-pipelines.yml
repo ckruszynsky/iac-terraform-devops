@@ -34,7 +34,8 @@ stages:
     jobs:
       - job: Provision
         displayName: "Provisioning Container Instance"
-        pool: vmImage:"ubuntu-latest"
+        pool:
+          vmImage: 'ubuntu-latest'
         variables:
           -group: terraformEnvVars
         steps:
