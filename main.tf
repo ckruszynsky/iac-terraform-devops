@@ -12,6 +12,12 @@ terraform {
     key                  = "terraform.tfstate"
   }
 }
+
+variable "imagebuild" {
+  type        = string
+  description = "Latest Image Build"
+}
+
 resource "azurerm_resource_group" "terraform_test" {
   name     = "tf_resource_grp"
   location = "South Central US"
@@ -27,7 +33,7 @@ resource "azurerm_container_group" "tfcg_test" {
 
   container {
     name   = "weatherapi"
-    image  = "ckruszynsky/weatherapi"
+    image  = "ckruszynsky/weatherapi:${var.imagebuild}"
     cpu    = "1"
     memory = "1"
     ports {
