@@ -5,6 +5,7 @@ provider "azurerm" {
 
 terraform {
   backend "azurerm" {
+    subscription_id      = "9965be60-5b04-4755-8a13-c62d92f8a196"
     resource_group_name  = "tf_rg_blob"
     storage_account_name = "tfstoreckruszy"
     container_name       = "tfstate"
