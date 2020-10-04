@@ -35,12 +35,13 @@ stages:
       - job: Provision
         displayName: "Provisioning Container Instance"
         pool:
-          vmImage: 'ubuntu-latest'
+          vmImage: "ubuntu-latest"
         variables:
           -group: terraformEnvVars
         steps:
           - script: |
               set -e
+              cd ./weatherapi
               terraform init -input=false
               terraform apply -input=false -auto-approve
             name: "RunTerraform"
