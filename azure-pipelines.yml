@@ -1,31 +1,52 @@
 # Docker
-# Build a Docker image 
+# Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
+  - master
 
 resources:
-- repo: self
+  - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: "$(Build.BuildId)"
 
 stages:
-- stage: Build
-  displayName: Build image
-  jobs:  
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: Docker@2
-      inputs:
-        containerRegistry: 'Ckruszynsky Docker Hub'
-        repository: 'ckruszynsky/weatherapi'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        tags: |
-          $(tag)
-    
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: "Ckruszynsky Docker Hub"
+              repository: "ckruszynsky/weatherapi"
+              command: "buildAndPush"
+              Dockerfile: "**/Dockerfile"
+              tags: |
+                $(tag)
+  - stage: Provision
+    displayName: "Terraform Provisioning"
+    dependsOn: Build
+    jobs:
+      - job: Provision
+        displayName: "Provisioning Container Instance"
+        pool: vmImage:'ubuntu-latest'
+        variables:
+          -group: terraformEnvVars
+        steps:
+          - script: |
+              set -e
+              terraform init -input=false
+              terraform apply -input=false -auto-approve
+            name: "RunTerraform"
+            displayName: "Run Terraform"
+            env:
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+              TF_VAR_imagebuild: $(tag)

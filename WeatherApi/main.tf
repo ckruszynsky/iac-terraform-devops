@@ -3,6 +3,14 @@ provider "azurerm" {
   features {}
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "tf_rg_blob"
+    storage_account_name = "tfstoreckruszy"
+    container            = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+}
 resource "azurerm_resource_group" "terraform_test" {
   name     = "tf_resource_grp"
   location = "South Central US"
